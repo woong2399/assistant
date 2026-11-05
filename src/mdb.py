@@ -70,8 +70,10 @@ def daily_dates():
 def daily_rows(date_str):
     con = connect()
     rows = con.execute(
-        "SELECT code, name, pct, theme, telegram FROM daily_pick WHERE pick_date = ? ORDER BY pct DESC NULLS LAST, name",
+        "SELECT code, name, pct, amount_est, source, theme, issue, news FROM daily_pick "
+        "WHERE pick_date = ? ORDER BY pct DESC NULLS LAST, name",
         [date_str],
     ).fetchall()
     con.close()
-    return [dict(code=r[0], name=r[1], pct=r[2], theme=r[3], telegram=r[4]) for r in rows]
+    return [dict(code=r[0], name=r[1], pct=r[2], amount=r[3], source=r[4], theme=r[5], issue=r[6],
+                 news=json.loads(r[7]) if r[7] else []) for r in rows]
