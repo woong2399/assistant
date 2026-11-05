@@ -126,26 +126,5 @@ else:
 st.subheader("5. 수급 들어온 테마")
 st.caption("준비 중 (종목→테마 표 필요)")
 
-if USE_MD:
-    st.subheader("6. Daily 급등 종목")
-    st.caption("등락률 높은 순. 아래 줄은 텔레그램에서 뽑은 이슈")
-    try:
-        ddates = st.cache_data(ttl=300)(mdb.daily_dates)()
-        if ddates:
-            dd = st.selectbox("Daily 날짜", ddates, label_visibility="collapsed")
-            html = ""
-            for r in st.cache_data(ttl=300)(mdb.daily_rows)(dd):
-                p = r["pct"]
-                pc = "" if p is None else f'<span style="color:{UP if p >= 0 else DOWN}">{"+" if p >= 0 else ""}{p:.2f}%</span>'
-                th = f' <small>{r["theme"]}</small>' if r["theme"] else ""
-                html += f'<div class="it"><b>{r["name"]}</b> <small>{r["code"]}</small> {pc}{th}</div>'
-                if r["telegram"]:
-                    html += f'<div class="sub">{r["telegram"]}</div>'
-            st.markdown(html, unsafe_allow_html=True)
-        else:
-            st.caption("Daily 자료 없음")
-    except Exception as e:  # noqa: BLE001
-        st.caption(f"Daily 불러오기 실패: {e}")
-
 if doc["failures"]:
     st.warning("자료 없음: " + ", ".join(f.split("(")[0] for f in doc["failures"]))
